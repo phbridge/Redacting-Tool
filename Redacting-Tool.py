@@ -29,29 +29,35 @@
 # Version 7.0 Date xx/xx/xx     Note to the Gaffer - if your reading this then the above line is a joke only :-)
 #
 # ToDo *******************TO DO*********************
-# 1.0 Implement IP masking
+# 1.0 Implement Full IP masking (4 octet)
+# 1.1 Implement Partial IP masking (first 3 octet)
+# 1.2 Implement Partial IP masking (first 2 octet)
 # 2.0 Implement hostname masking
 # 3.0 Implement domain masking
 # 4.0 Implement MAC address masking
 # 5.0 Table masking
 # 6.0 Implement Username/Password masking
+# 7.0
 #
 
-import argparse  # needed for the nice menus and variable checking
-from datetime import datetime  # needed for the datetime for filename
-#import csv  # needed for parsing csv files in lazy way
+import argparse                 # needed for the nice menus and variable checking
+from datetime import datetime   # needed for the datetime for filename
+import re                       # Regular expression usage for finding things
+import random                   # used for random IP address generation
 
 parser = argparse.ArgumentParser(description='process input')
-parser.add_argument("-ACCEPTEULA", "--acceptedeula", action='store_true', default=False,
+parser.add_argument("-ACCEPTEULA", "--acceptedeula", action='store_true', default=False, required="True",
                     help="Marking this flag accepts EULA embedded withing the script")
+parser.add_argument("-i", "--inputfile", required=True, type=argparse.FileType('r', encoding='UTF-8'),
+                    help="input file that needs to be redacted")
 parser.add_argument("-v", "--verbose", action='store_true', default=False,
                     help="increase output verbosity", )
 parser.add_argument("-IP", "--IP", action='store_true', default=False,
                     help="use this flag to modify all IP addresses")
-parser.add_argument("-h", "--hostname", action='store_true', default=False,
+parser.add_argument("-hostname", "--hostname", action='store_true', default=False,
                     help="use this flag to modify all hostnames")
 parser.add_argument("-d", "--domain", action='store_true', default=False,
-                    help="use this flag to modify all hostnames")
+                    help="use this flag to modify all domains")
 parser.add_argument("-m", "--mac", action='store_true', default=False,
                     help="use this flag to modify all mac addresses")
 parser.add_argument("-u", "--username", action='store_true', default=False,
@@ -92,41 +98,122 @@ if args.verbose == True:
     print(str(args.username))
     print(str(args.certificates))
 
+#
+#
+# NOW LOGFILE STUFF
+#
+#
+
+#format_date = datetime.strptime(args.date, "%Y-%m-%d")
+
 try:
-    if args.verbose == True:
-        print("trying to create file")
-    output_filename = datetime.now()
-    if args.verbose == True:
-        print(str(output_filename))
-    output_log = open(str(output_filename), 'a+')
-    if args.verbose == True:
-        print("file created sucessfully")
-        output_log.write(str(datetime.now()) + "     " + "file created sucessfully " + "\n")
+    output_filename = str(datetime.now()) + "-Redacting-Tool"
+    output_log = open(str(output_filename) + ".text", 'a+')
+    output_log.write(str(datetime.now()) + "     " + "log file created sucessfully file name should be " +
+                     str(output_filename) + "\n")
 except:
     print("something went bad opening/creating file for writing")
+    print("Unexpected error:", sys.exc_info()[0])
     quit()
+if args.verbose:
+    print("Arguments and files loaded")
+    output_log.write(str(datetime.now()) + "     " + "-v Verbose flag set printing extended ouput" + "\n")
+
+output_log.write(str(datetime.now()) + "     " + "Arguments and files loaded" + "\n")
+output_log.write(str(datetime.now()) + "     " + "verbose flag is " + str(args.verbose) + "\n")
+output_log.write(str(datetime.now()) + "     " + "IP flag is" + str(args.IP) + "\n")
+output_log.write(str(datetime.now()) + "     " + "hostname flag is" + str(args.hostname) + "\n")
+output_log.write(str(datetime.now()) + "     " + "domain flag is" + str(args.domain) + "\n")
+output_log.write(str(datetime.now()) + "     " + "mac flag is" + str(args.mac) + "\n")
+output_log.write(str(datetime.now()) + "     " + "username flag is" + str(args.username) + "\n")
+output_log.write(str(datetime.now()) + "     " + "certificates flag is" + str(args.certificates) + "\n")
+output_log.write(str(datetime.now()) + "     " + "inputfile is" + str(args.inputfile) + "\n")
+
+#
+#
+# NOW LOAD THE INPUT FILE
+#
+#
+try:
+    input_file = open(args.inputfile.name)
+    output_log.write(str(datetime.now()) + "     " + "input file opened" + "\n")
+except:
+    print("error opening input file")
+    output_log.write(str(datetime.now()) + "     " + "error opening input file" + "\n")
+
+#
+#
+# FIND ALL IP ADDRESSES
+#
+#
+ip_address_list_raw = []
+for line in input_file:
+    working_line = []
+    working_line = re.findall( r'[0-9]+(?:\.[0-9]+){3}', line)
+    for i in working_line:
+        # print(working_line)
+        # print(i)
+        ip_address_list_raw.append(i)
+    # print(line)
+
+print(ip_address_list_raw)
+ip_address_list = []
+
+for i in ip_address_list_raw:
+    if not i:
+        # print("skipping empty array")
+        continue
+    if i not in ip_address_list:
+        ip_address_list.append(i)
+
+print(ip_address_list)
+#
+#
+# NOW REPLACE IP ADDRESSES
+#
+#
+
+#todo change this to accomodate full, 2 oct and 3 oct masking
+random_address = '.'.join('%s'%random.randint(0, 255) for i in range(4))
+print(random_address)
+#
+#
+# NOW REPLACE HOSTNAMES
+#
+#
+
+#               for i, j in dic.iteritems():
+#                       text = text.replace(i, j)
+#                   return text
+
+#
+#
+# NOW REPLACE DOMAINS
+#
+#
+
+#
+#
+# NOW REPLACE MAC ADDRESSES
+#
+#
+
+#
+#
+# NOW REPLACE USERNAMES
+#
+#
+
+#
+#
+# NOW REPLACE CERTIFICATES
+#
+#
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+input_file.close()
 
 output_log.write(str(datetime.now()) + "     " + "Done Going Home Now " + "\n")
 output_log.close()

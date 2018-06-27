@@ -1,6 +1,6 @@
 # Title
-# Redacting Tool
-#
+Redacting Tool
+ 
 # Language
 # Python 3.5
 #

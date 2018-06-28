@@ -56,13 +56,13 @@ parser.add_argument("-o", "--outputfile", required=False, type=argparse.FileType
                     help="input file that needs to be redacted")
 parser.add_argument("-v", "--verbose", action='store_true', default=False,
                     help="increase output verbosity", )
-parser.add_argument("-IP1", "--IPv4_1", action='store_true', default=False,
+parser.add_argument("-1v4", "--IPv4_1", action='store_true', default=False,
                     help="use this flag to modify IP addresses 1st octet only")
-parser.add_argument("-IP2", "--IPv4_2", action='store_true', default=False,
+parser.add_argument("-2v4", "--IPv4_2", action='store_true', default=False,
                     help="use this flag to modify IP addresses 1st + 2nd octet only")
-parser.add_argument("-IP3", "--IPv4_3", action='store_true', default=False,
+parser.add_argument("-3v4", "--IPv4_3", action='store_true', default=False,
                     help="use this flag to modify IP addresses 1st + 2nd + 3rd octet only")
-parser.add_argument("-IP4", "--IPv4_4", action='store_true', default=False,
+parser.add_argument("-4v4", "--IPv4_4", action='store_true', default=False,
                     help="use this flag to modify IP addresses whole IP address")
 parser.add_argument("-1v6", "--IPv6_1", action='store_true', default=False,
                     help="use this flag to modify IPv6 addresses 1st colon")
@@ -331,45 +331,55 @@ for line in input_file:
         for i in username_working_line:
             username_list_raw.append(i)
 #
+# Print details if verbose selected
+#
+if args.verbose:
+    output_log.write(
+                str(datetime.now()) + "     " + "here is the RAW IPv4 address list" + str(ipv4_address_list_raw) + "\n")
+    output_log.write(
+                str(datetime.now()) + "     " + "here is the RAW IPv6 address list" + str(ipv6_address_list_raw) + "\n")
+    output_log.write(
+                str(datetime.now()) + "     " + "here is the RAW hostname list" + str(hostname_list_raw) + "\n")
+    output_log.write(
+                str(datetime.now()) + "     " + "here is the RAW domain list" + str(domain_list_raw) + "\n")
+    output_log.write(
+                str(datetime.now()) + "     " + "here is the RAW mac address list" + str(mac_address_list_raw) + "\n")
+    output_log.write(
+                str(datetime.now()) + "     " + "here is the RAW username list" + str(username_list_raw) + "\n")
+#
 # Print All IPv4 addresses
 #
-output_log.write(str(datetime.now()) + "     " + "here is the RAW IPv4 address list" + str(ipv4_address_list_raw) + "\n")
 output_log.write(str(datetime.now()) + "     " + "here is the RAW IPv4 address list length is " + str(len(ipv4_address_list_raw)) + "\n")
 print(str(datetime.now()) + "     " + str(len(ipv4_address_list_raw)) + " IPv4 addresses found")
 #
 # Print All IPv6 addresses
 #
-output_log.write(str(datetime.now()) + "     " + "here is the RAW IPv6 address list" + str(ipv6_address_list_raw) + "\n")
 output_log.write(str(datetime.now()) + "     " + "here is the RAW  IPv6address list length is " + str(len(ipv6_address_list_raw)) + "\n")
 print(str(datetime.now()) + "     " + str(len(ipv6_address_list_raw)) + " IPv6 addresses found")
 #
 # Print Hostname Stuff
 #
-output_log.write(str(datetime.now()) + "     " + "here is the RAW hostname list" + str(hostname_list_raw) + "\n")
 output_log.write(str(datetime.now()) + "     " + "here is the RAW hostname list length is " + str(len(hostname_list_raw)) + "\n")
 print(str(datetime.now()) + "     " + str(len(hostname_list_raw)) + " hostname found")
 #
 # Print domain name stuff
 #
-output_log.write(str(datetime.now()) + "     " + "here is the RAW domain list" + str(domain_list_raw) + "\n")
 output_log.write(str(datetime.now()) + "     " + "here is the RAW domain list length is " + str(len(domain_list_raw)) + "\n")
 print(str(datetime.now()) + "     " + str(len(hostname_list_raw)) + " domains found")
 #
 # Print mac address stuff
 #
-output_log.write(str(datetime.now()) + "     " + "here is the RAW mac address list" + str(mac_address_list_raw) + "\n")
 output_log.write(str(datetime.now()) + "     " + "here is the RAW mac address list length is " + str(len(mac_address_list_raw)) + "\n")
 print(str(datetime.now()) + "     " + str(len(mac_address_list_raw)) + " MAC addresses found")
 #
 # Print Username stuff
 #
-output_log.write(str(datetime.now()) + "     " + "here is the RAW username list" + str(username_list_raw) + "\n")
 output_log.write(str(datetime.now()) + "     " + "here is the RAW username list length is " + str(len(username_list_raw)) + "\n")
 print(str(datetime.now()) + "     " + str(len(username_list_raw)) + " usernames found")
-
 #
 # Unique things
 #
+
 
 def remove_duplicates(original_list):
     no_duplicate_list = []
@@ -387,30 +397,26 @@ domain_list = remove_duplicates(domain_list_raw)
 mac_address_list = remove_duplicates(mac_address_list_raw)
 username_list = remove_duplicates(username_list_raw)
 
-output_log.write(str(datetime.now()) + "     " + "here is the no dup list is " + str(ipv4_address_list) + "\n")
+if args.verbose:
+    output_log.write(str(datetime.now()) + "     " + "here is the no dup list is " + str(ipv4_address_list) + "\n")
+    output_log.write(str(datetime.now()) + "     " + "here is the no dup ipv6 list is " + str(ipv6_address_list) + "\n")
+    output_log.write(str(datetime.now()) + "     " + "here is the no dup hostname list is " + str(hostname_list) + "\n")
+    output_log.write(str(datetime.now()) + "     " + "here is the no dup domain list is " + str(domain_list) + "\n")
+    output_log.write(str(datetime.now()) + "     " + "here is the no dup mac address list is " + str(mac_address_list) + "\n")
+    output_log.write(str(datetime.now()) + "     " + "here is the no dup username list is " + str(username_list) + "\n")
+
 output_log.write(str(datetime.now()) + "     " + "here is the Rno dup list length is " + str(len(ipv4_address_list)) + "\n")
 print(str(datetime.now()) + "     " + str(len(ipv4_address_list)) + " unique IP addresses found")
-
-output_log.write(str(datetime.now()) + "     " + "here is the no dup ipv6 list is " + str(ipv6_address_list) + "\n")
 output_log.write(str(datetime.now()) + "     " + "here is the Rno dup ipv6 list length is " + str(len(ipv6_address_list)) + "\n")
 print(str(datetime.now()) + "     " + str(len(ipv6_address_list)) + " unique IPv6 addresses found")
-
-output_log.write(str(datetime.now()) + "     " + "here is the no dup hostname list is " + str(hostname_list) + "\n")
 output_log.write(str(datetime.now()) + "     " + "here is the Rno dup hostname list length is " + str(len(hostname_list)) + "\n")
 print(str(datetime.now()) + "     " + str(len(hostname_list)) + " unique hostname addresses found")
-
-output_log.write(str(datetime.now()) + "     " + "here is the no dup domain list is " + str(domain_list) + "\n")
 output_log.write(str(datetime.now()) + "     " + "here is the Rno dup domain list length is " + str(len(domain_list)) + "\n")
 print(str(datetime.now()) + "     " + str(len(domain_list)) + " unique domain addresses found")
-
-output_log.write(str(datetime.now()) + "     " + "here is the no dup mac address list is " + str(mac_address_list) + "\n")
 output_log.write(str(datetime.now()) + "     " + "here is the Rno dup mac address list length is " + str(len(mac_address_list)) + "\n")
 print(str(datetime.now()) + "     " + str(len(mac_address_list)) + " unique mac addresses found")
-
-output_log.write(str(datetime.now()) + "     " + "here is the no dup username list is " + str(username_list) + "\n")
 output_log.write(str(datetime.now()) + "     " + "here is the Rno dup username list length is " + str(len(username_list)) + "\n")
 print(str(datetime.now()) + "     " + str(len(username_list)) + " unique username found")
-
 #
 # Build replacement dictionary
 #
@@ -524,24 +530,18 @@ mac_regex_split = re.compile("[. :]")
 for i in mac_address_list:
     mac_origional_address = mac_regex_split.split(i)
     mac_masked_address = []
-    # Work out format and replace
-    # print(len(mac_origional_address))
-    if len(mac_origional_address) == 6:
-        #print("address are in 00:11:22:33:44:55 format")
+    if len(mac_origional_address) == 6: #for mac address in format 00:11:22:33:44:55
         for o in range(0, len(mac_origional_address)):
             mac_masked_address.append(''.join(str(random.choice("0123456789ABCDEF") + random.choice("0123456789ABCDEF"))))
             if o >= (len(mac_origional_address)-1):
                 mac_masked_address.append(":")
 
-    elif len(mac_origional_address) == 3:
-        #print("address are in 0011.2233.4455 format")
-        #print(mac_origional_address)
+    elif len(mac_origional_address) == 3: #  for mac address in format 0011.2233.4455
         for o in range(0, len(mac_origional_address)):
             mac_masked_address.append(''.join(str(random.choice("0123456789ABCDEF") + random.choice("0123456789ABCDEF") +
                                                    random.choice("0123456789ABCDEF") + random.choice("0123456789ABCDEF"))))
             if o <= (len(mac_origional_address)-2):
                 mac_masked_address.append(".")
-        #print(''.join(str(x) for x in mac_masked_address))
     if not args.nodictionary:
         mac_replacement_dictionary[i] = ''.join(str(x) for x in mac_masked_address)
     elif args.nodictionary:
@@ -588,36 +588,53 @@ lines_done = 0
 start_time = datetime.now()
 
 for line in input_file:
-    first_pass = str(ipv4regexp.sub(lambda match: ipv4_replacement_dictionary[match.group(0)], line))
-    second_pass = (str(ipv6regexp.sub(lambda match: ipv6_replacement_dictionary[match.group(0)], first_pass)))
-    third_pass = (str(hostnameregexp.sub(lambda match: hostname_replacement_dictionary[match.group(0)], second_pass)))
-    fourth_pass = (str(domainregexp.sub(lambda match: domainname_replacement_dictionary[match.group(0)], third_pass)))
-    fith_pass = (str(macaddressregexp.sub(lambda match: mac_replacement_dictionary[match.group(0)], fourth_pass)))
-    output_file.write(str(usernameregexp.sub(lambda match: username_replacement_dictionary[match.group(0)], fith_pass)))
+    # There has got to be a nicer way of doing this at somepoint. Learning time needed. This adds 1 second for 30k lines
+    if ipv4_octets_to_replace == 0:
+        first_pass = line
+    else:
+        first_pass = str(ipv4regexp.sub(lambda match: ipv4_replacement_dictionary[match.group(0)], line))
+
+    if ipv6_octets_to_replace == 0:
+        second_pass = first_pass
+    else:
+        second_pass = (str(ipv6regexp.sub(lambda match: ipv6_replacement_dictionary[match.group(0)], first_pass)))
+
+    if args.hostname:
+        third_pass = (str(hostnameregexp.sub(lambda match: hostname_replacement_dictionary[match.group(0)], second_pass)))
+    else:
+        third_pass = second_pass
+
+    if args.domain:
+        fourth_pass = (str(domainregexp.sub(lambda match: domainname_replacement_dictionary[match.group(0)], third_pass)))
+    else:
+        fourth_pass = third_pass
+
+    if args.mac:
+        fith_pass = (str(macaddressregexp.sub(lambda match: mac_replacement_dictionary[match.group(0)], fourth_pass)))
+    else:
+        fith_pass = fourth_pass
+
+    if args.username:
+        output_file.write(str(usernameregexp.sub(lambda match: username_replacement_dictionary[match.group(0)], fith_pass)))
+    else:
+        output_file.write(str(fith_pass))
+
     lines_done += 1
 
 end_time = datetime.now()
 
-if not ipv4_octets_to_replace == 0:
-    print("")
-    #print(str(datetime.now()) + "     " + "done replaced " + str(len(ipv4_address_list_raw)) + " IPv4 adddress hidden in " +
-    #      str(lines_done) + " lines in " + str(end_time-start_time) + " seconds")
-else:
+if ipv4_octets_to_replace == 0:
     print(str(datetime.now()) + "     " + "done BUT REPLACED NO IPv4")
     print(str(datetime.now()) + "     " + "done BUT REPLACED NO IPv4")
     print(str(datetime.now()) + "     " + "done BUT REPLACED NO IPv4")
     print(str(datetime.now()) + "     " + "done BUT REPLACED NO IPv4")
     print(str(datetime.now()) + "     " + "done BUT REPLACED NO IPv4")
-if not ipv6_octets_to_replace == 0:
-    print("")
-    #print(str(datetime.now()) + "     " + "done replaced " + str(len(ipv6_address_list_raw)) + " IPv6 adddress hidden in " +
-    #      str(lines_done) + " lines in " + str(end_time-start_time) + " seconds")
-else:
-    print(str(datetime.now()) + "     " + "done BUT REPLACED NO IPv4")
-    print(str(datetime.now()) + "     " + "done BUT REPLACED NO IPv4")
-    print(str(datetime.now()) + "     " + "done BUT REPLACED NO IPv4")
-    print(str(datetime.now()) + "     " + "done BUT REPLACED NO IPv4")
-    print(str(datetime.now()) + "     " + "done BUT REPLACED NO IPv4")
+if ipv6_octets_to_replace == 0:
+    print(str(datetime.now()) + "     " + "done BUT REPLACED NO IPv6")
+    print(str(datetime.now()) + "     " + "done BUT REPLACED NO IPv6")
+    print(str(datetime.now()) + "     " + "done BUT REPLACED NO IPv6")
+    print(str(datetime.now()) + "     " + "done BUT REPLACED NO IPv6")
+    print(str(datetime.now()) + "     " + "done BUT REPLACED NO IPv6")
 
 output_log.write(str(datetime.now()) + "     " + "replaced  " + str(len(ipv4_address_list_raw)) +" IPv4 addresses" + "\n")
 output_log.write(str(datetime.now()) + "     " + "replaced  " + str(len(ipv6_address_list_raw)) + " IPv6 addresses" + "\n")

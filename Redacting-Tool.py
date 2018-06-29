@@ -23,9 +23,20 @@
 # in some way [see above comments on Beer, Wine, Steak and Greggs.].
 #
 # Version Control               Comments
-# Version 0.01 Date 14/06/18     Inital draft
+# Version 0.1 Date 14/06/18     Inital draft
+# Version 0.2 Date 26/06/18     Working for IPv4
+# Version 0.3 Date 26/06/18     Working for IPv6
+# Version 0.4 Date 26/06/18     Working for hostnames
+# Version 0.5 Date 26/06/18     Working for domains
+# Version 0.6 Date 26/06/18     Working for usernames
+# Version 0.7 Date 26/06/18     Working for NoDictrionary
+# Version 0.8 Date 26/06/18     Working for MAC addresses
+# Version 1.0 Date 27/06/18     Tieded up code All working
 #
-# Version 6.9 Date xx/xx/xx     Took over world and actuially got paid for value added work....If your reading this approach me on linkedin for details of weekend "daily" rate
+#
+#
+# Version 6.9 Date xx/xx/xx     Took over world and actuially got paid for value added work....If your reading this
+#                               approach me on linkedin for details of weekend "daily" rate :-)
 # Version 7.0 Date xx/xx/xx     Note to the Gaffer - if your reading this then the above line is a joke only :-)
 #
 # ToDo *******************TO DO*********************
@@ -38,7 +49,7 @@
 # 4.0 Implement MAC address masking                         DONE
 # 5.0 Table masking                                         DONE
 # 6.0 Implement Username/Password masking                   DONE
-# 7.0 Implement Wget Counter
+# 7.0 Implement Wget Counter                                TO DO When time Permits
 # 8.0 Implement wipeout masking                             DONE
 #
 
@@ -136,14 +147,11 @@ if args.verbose == True:
     print(str(args.username))
     print(str(args.certificates))
     print(str(args.output_filename))
-
 #
 #
 # NOW LOGFILE STUFF
 #
 #
-
-#format_date = datetime.strptime(args.date, "%Y-%m-%d")
 
 try:
     output_filename = str(datetime.now()) + "-Redacting-Tool"
@@ -156,7 +164,6 @@ except:
     quit()
 
 # Open output file
-
 
 try:
     if args.outputfile is None:

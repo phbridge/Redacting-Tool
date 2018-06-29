@@ -7,6 +7,11 @@ Python 3.5
 # Description
 This tool will remove all IP address, MAC addresses, Hostnames, Domains, Usernames from various output from 
 Cisco Devices. NOTE: All Cisco devices remove passwords already so no functionallity is included for this.
+This script has been tested on output from multiple devices. Its suggested to manually check a little when its been run
+incase any new device formatting is not found/replaced.
+
+If you find something that is not correctly masked please let me know so that I can update the script to match it
+in the future.
 
 # Contacts
 Phil Bridges - phbridge@cisco.com

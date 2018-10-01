@@ -45,7 +45,7 @@
 # 1.2 Implement Partial IP masking (first 2 octet)          DONE
 # 1.3 Implement IPv6 masking                                DONE
 # 2.0 Implement hostname masking                            DONE
-# 3.0 Implement domain masking                              DONE
+# 3.0 Implement domain masking                              DONE - EDITED to include both domain name and domain-name
 # 4.0 Implement MAC address masking                         DONE
 # 5.0 Table masking                                         DONE
 # 6.0 Implement Username/Password masking                   DONE
@@ -213,12 +213,11 @@ parse_all_arguments()
 create_logfile()
 create_output_file()
 write_kickoff_debugging()
-#
-#
-# NOW LOAD THE INPUT FILE
-#
-#
+
 def open_input_file():
+    #
+    # NOW LOAD THE INPUT FILE
+    #
     try:
         input_file = open(args.inputfile.name, "r", buffering=16777216, encoding='latin-1')
         output_log.write(str(datetime.now()) + "     " + "input file opened" + "\n")
@@ -289,12 +288,13 @@ def scope_ipv6_addresses():
     return
 scope_ipv6_addresses()
 
-#
-# Find All things to replace
-#
+
 
 
 def compile_regex():
+    #
+    # Find All things to replace
+    #
     ipv4_address_list_raw = []
     ipv6_address_list_raw = []
     hostname_list_raw = []
@@ -358,12 +358,12 @@ def process_input_for_dictionary():
                 username_list_raw.append(i)
     return
 process_input_for_dictionary()
-#
-# Print details if verbose selected
-#
 
 
 def print_verbose_debuging():
+    #
+    # Print details if verbose selected
+    #
     output_log.write(
                 str(datetime.now()) + "     " + "here is the RAW IPv4 address list" + str(ipv4_address_list_raw) + "\n")
     output_log.write(
@@ -549,7 +549,7 @@ domainname_replacement_dictionary = {}
 domainname_list_replacement = []
 
 for i in domain_list:
-    domainname_replacement_dictionary[i] = "<--Domain-->"
+    domainname_replacement_dictionary[i] = "<--DomainName-->"
 
 output_log.write(str(datetime.now()) + "     " + "here is the replacement domain list is " + str(domainname_list_replacement) + "\n")
 output_log.write(str(datetime.now()) + "     " + "here is the replacement domain dictionary is " + str(domainname_replacement_dictionary) + "\n")
@@ -685,12 +685,12 @@ print(str(datetime.now()) + "     " + "replaced " + str(len(mac_address_list_raw
 print(str(datetime.now()) + "     " + "replaced " + str(len(username_list_raw)) + " usernames all ... ")
 print(str(datetime.now()) + "     " + "hidden in " + str(lines_done) + " lines of output ... ")
 print(str(datetime.now()) + "     " + "and it only took me..... " + str(end_time-start_time) + " seconds")
-#
-#
-# If dictionary was used export dictionary to file now
-#
-#
-if not args.nodictionary:
+
+
+def create_output_dictionary():
+    #
+    # If dictionary was used export dictionary to file now
+    #
     try:
         output_dictionary_filename = str(datetime.now()) + "-Dictionary-Redacting-Tool"
         output_dictionary = open(str(output_dictionary_filename) + ".text", 'a+')
@@ -712,6 +712,10 @@ if not args.nodictionary:
         print("something went bad opening/creating dictionary file for writing")
         print("Unexpected error:", sys.exc_info()[0])
         quit()
+    return
+
+if not args.nodictionary:
+    create_output_dictionary()
 #
 #
 # TidyUp and CleanUp

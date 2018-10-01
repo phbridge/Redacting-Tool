@@ -58,289 +58,312 @@ from datetime import datetime   # needed for the datetime for filename
 import re                       # Regular expression usage for finding things
 import random                   # used for random IP address generation
 
-parser = argparse.ArgumentParser(description='process input')
-parser.add_argument("-ACCEPTEULA", "--acceptedeula", action='store_true', default=False,
-                    help="Marking this flag accepts EULA embedded withing the script")
-parser.add_argument("-i", "--inputfile", required=True, type=argparse.FileType('r', encoding='UTF-8'),
-                    help="input file that needs to be redacted")
-parser.add_argument("-o", "--outputfile", required=False, type=argparse.FileType('r', encoding='UTF-8'),
-                    help="input file that needs to be redacted")
-parser.add_argument("-v", "--verbose", action='store_true', default=False,
-                    help="increase output verbosity", )
-parser.add_argument("-1v4", "--IPv4_1", action='store_true', default=False,
-                    help="use this flag to modify IP addresses 1st octet only")
-parser.add_argument("-2v4", "--IPv4_2", action='store_true', default=False,
-                    help="use this flag to modify IP addresses 1st + 2nd octet only")
-parser.add_argument("-3v4", "--IPv4_3", action='store_true', default=False,
-                    help="use this flag to modify IP addresses 1st + 2nd + 3rd octet only")
-parser.add_argument("-4v4", "--IPv4_4", action='store_true', default=False,
-                    help="use this flag to modify IP addresses whole IP address")
-parser.add_argument("-1v6", "--IPv6_1", action='store_true', default=False,
-                    help="use this flag to modify IPv6 addresses 1st colon")
-parser.add_argument("-2v6", "--IPv6_2", action='store_true', default=False,
-                    help="use this flag to modify IPv6 addresses 1st + 2nd colon")
-parser.add_argument("-3v6", "--IPv6_3", action='store_true', default=False,
-                    help="use this flag to modify IPv6 addresses 1st, 2nd + 3rd colon")
-parser.add_argument("-4v6", "--IPv6_4", action='store_true', default=False,
-                    help="use this flag to modify IPv6 addresses 1st, 2nd, 3rd + 4th colon")
-parser.add_argument("-5v6", "--IPv6_5", action='store_true', default=False,
-                    help="use this flag to modify IPv6 addresses 1st, 2nd, 3rd, 4th + 5th colon")
-parser.add_argument("-6v6", "--IPv6_6", action='store_true', default=False,
-                    help="use this flag to modify IPv6 addresses 1st, 2nd, 3rd, 4th, 5th + 6th colon")
-parser.add_argument("-7v6", "--IPv6_7", action='store_true', default=False,
-                    help="use this flag to modify IPv6 addresses 1st, 2nd, 3rd, 4th, 5th, 6th + 7th colon")
-parser.add_argument("-8v6", "--IPv6_8", action='store_true', default=False,
-                    help="use this flag to modify IPv6 addresses 1st, 2nd, 3rd, 4th, 5th, 6th, 7th + 8th colon")
-parser.add_argument("-NoDict", "--nodictionary", action='store_true', default=False,
-                    help="Use the NoDict flag if you do not want to use dictionary and use <--field name--> markers")
-parser.add_argument("-hostname", "--hostname", action='store_true', default=False,
-                    help="use this flag to modify all hostnames")
-parser.add_argument("-d", "--domain", action='store_true', default=False,
-                    help="use this flag to modify all domains")
-parser.add_argument("-m", "--mac", action='store_true', default=False,
-                    help="use this flag to modify all mac addresses")
-parser.add_argument("-u", "--username", action='store_true', default=False,
-                    help="use this flag to modify all credentials")
-parser.add_argument("-c", "--certificates", action='store_true', default=False,
-                    help="use this flag to modify all certificates NOT IMPLEMENTED YET")
-args = parser.parse_args()
 
-if args.acceptedeula == False:
-    print("""you need to accept the EULA agreement which is as follows:-
-# EULA
-# This software is provided as is and with zero support level. Support can be purchased by providing Phil bridges with a 
-# varity of Beer, Wine, Steak and Greggs pasties. Please contact phbridge@cisco.com for support costs and arrangements. 
-# Until provison of alcohol or baked goodies your on your own but there is no rocket sciecne involved so dont panic too 
-# much. To accept this EULA you must include the correct flag when running the script. If this script goes crazy wrong and 
-# breaks everything then your also on your own and Phil will not accept any liability of any type or kind. As this script 
-# belongs to Phil and NOT Cisco then Cisco cannot be held responsable for its use or if it goes bad, nor can Cisco make
-# any profit from this script. Phil can profit from this script but will not assume any liability. Other than the boaring
-# stuff please enjoy and plagerise as you like (as I have no ways to stop you) but common curtacy says to credit me in some
-# way [see above comments on Beer, Wine, Steak and Greggs.].
+def parse_all_arguments():
+    parser = argparse.ArgumentParser(description='process input')
+    parser.add_argument("-ACCEPTEULA", "--acceptedeula", action='store_true', default=False,
+                        help="Marking this flag accepts EULA embedded withing the script")
+    parser.add_argument("-i", "--inputfile", required=True, type=argparse.FileType('r', encoding='UTF-8'),
+                        help="input file that needs to be redacted")
+    parser.add_argument("-o", "--outputfile", required=False,
+                        help="output file that needs to be redacted")
+    parser.add_argument("-v", "--verbose", action='store_true', default=False,
+                        help="increase output verbosity", )
+    parser.add_argument("-1v4", "--IPv4_1", action='store_true', default=False,
+                        help="use this flag to modify IP addresses 1st octet only")
+    parser.add_argument("-2v4", "--IPv4_2", action='store_true', default=False,
+                        help="use this flag to modify IP addresses 1st + 2nd octet only")
+    parser.add_argument("-3v4", "--IPv4_3", action='store_true', default=False,
+                        help="use this flag to modify IP addresses 1st + 2nd + 3rd octet only")
+    parser.add_argument("-4v4", "--IPv4_4", action='store_true', default=False,
+                        help="use this flag to modify IP addresses whole IP address")
+    parser.add_argument("-1v6", "--IPv6_1", action='store_true', default=False,
+                        help="use this flag to modify IPv6 addresses 1st colon")
+    parser.add_argument("-2v6", "--IPv6_2", action='store_true', default=False,
+                        help="use this flag to modify IPv6 addresses 1st + 2nd colon")
+    parser.add_argument("-3v6", "--IPv6_3", action='store_true', default=False,
+                        help="use this flag to modify IPv6 addresses 1st, 2nd + 3rd colon")
+    parser.add_argument("-4v6", "--IPv6_4", action='store_true', default=False,
+                        help="use this flag to modify IPv6 addresses 1st, 2nd, 3rd + 4th colon")
+    parser.add_argument("-5v6", "--IPv6_5", action='store_true', default=False,
+                        help="use this flag to modify IPv6 addresses 1st, 2nd, 3rd, 4th + 5th colon")
+    parser.add_argument("-6v6", "--IPv6_6", action='store_true', default=False,
+                        help="use this flag to modify IPv6 addresses 1st, 2nd, 3rd, 4th, 5th + 6th colon")
+    parser.add_argument("-7v6", "--IPv6_7", action='store_true', default=False,
+                        help="use this flag to modify IPv6 addresses 1st, 2nd, 3rd, 4th, 5th, 6th + 7th colon")
+    parser.add_argument("-8v6", "--IPv6_8", action='store_true', default=False,
+                        help="use this flag to modify IPv6 addresses 1st, 2nd, 3rd, 4th, 5th, 6th, 7th + 8th colon")
+    parser.add_argument("-NoDict", "--nodictionary", action='store_true', default=False,
+                        help="Use the NoDict flag if you do not want to use dictionary and use <--field name--> markers")
+    parser.add_argument("-hostname", "--hostname", action='store_true', default=False,
+                        help="use this flag to modify all hostnames")
+    parser.add_argument("-d", "--domain", action='store_true', default=False,
+                        help="use this flag to modify all domains")
+    parser.add_argument("-m", "--mac", action='store_true', default=False,
+                        help="use this flag to modify all mac addresses")
+    parser.add_argument("-u", "--username", action='store_true', default=False,
+                        help="use this flag to modify all credentials")
+    parser.add_argument("-c", "--certificates", action='store_true', default=False,
+                        help="use this flag to modify all certificates NOT IMPLEMENTED YET")
+    args = parser.parse_args()
 
-# To accept the EULA please run with the -ACCEPTEULA flag
-    """)
-    quit()
+    if args.acceptedeula == False:
+        print("""you need to accept the EULA agreement which is as follows:-
+    # EULA
+    # This software is provided as is and with zero support level. Support can be purchased by providing Phil bridges with a 
+    # varity of Beer, Wine, Steak and Greggs pasties. Please contact phbridge@cisco.com for support costs and arrangements. 
+    # Until provison of alcohol or baked goodies your on your own but there is no rocket sciecne involved so dont panic too 
+    # much. To accept this EULA you must include the correct flag when running the script. If this script goes crazy wrong and 
+    # breaks everything then your also on your own and Phil will not accept any liability of any type or kind. As this script 
+    # belongs to Phil and NOT Cisco then Cisco cannot be held responsable for its use or if it goes bad, nor can Cisco make
+    # any profit from this script. Phil can profit from this script but will not assume any liability. Other than the boaring
+    # stuff please enjoy and plagerise as you like (as I have no ways to stop you) but common curtacy says to credit me in some
+    # way [see above comments on Beer, Wine, Steak and Greggs.].
+    
+    # To accept the EULA please run with the -ACCEPTEULA flag
+        """)
+        quit()
 
-if args.verbose == True:
-    print("-v Verbose flag set printing extended ouput")
-    print("seed file loaded is ", str(args.seedfile.name))
-print(str(datetime.now()) + "     " +"Arguments and files loaded")
-if args.verbose == True:
-    print(str(args.acceptedeula))
-    print(str(args.verbose))
-    print(str(args.IPv4_1))
-    print(str(args.IPv4_2))
-    print(str(args.IPv4_3))
-    print(str(args.IPv4_4))
-    print(str(args.IPv6_1))
-    print(str(args.IPv6_2))
-    print(str(args.IPv6_3))
-    print(str(args.IPv6_4))
-    print(str(args.IPv6_5))
-    print(str(args.IPv6_6))
-    print(str(args.IPv6_7))
-    print(str(args.IPv6_8))
-    print(str(args.hostname))
-    print(str(args.domain))
-    print(str(args.mac))
-    print(str(args.username))
-    print(str(args.certificates))
-    print(str(args.output_filename))
-#
-#
-# NOW LOGFILE STUFF
-#
-#
-
-try:
-    output_filename = str(datetime.now()) + "-Redacting-Tool"
-    output_log = open(str(output_filename) + ".text", 'a+')
-    output_log.write(str(datetime.now()) + "     " + "log file created sucessfully file name should be " +
-                     str(output_filename) + "\n")
-except:
-    print("something went bad opening/creating file for writing")
-    print("Unexpected error:", sys.exc_info()[0])
-    quit()
-
-# Open output file
-
-try:
-    if args.outputfile is None:
-        output_file_name = str(str(datetime.now()) + "-OutputFile")
-        print(str(datetime.now()) + "     " + "output file created with name " + str(output_file_name))
-    else:
-        output_file_name = str(args.outputfile.name)
-        print(str(datetime.now()) + "     " + "output file created with name " + str(output_file_name))
-    output_file = open(str(output_file_name) + ".text", 'a+')
-
-    print(str(datetime.now()) + "     " + "output file created and opened")
-
-except:
-    print("something went bad opening/creating output file for writing")
-    print("Unexpected error:", sys.exc_info()[0])
-    quit()
-
-if args.verbose:
+    if args.verbose == True:
+        print("-v Verbose flag set printing extended ouput")
+        print("seed file loaded is ", str(args.inputfile.name))
     print(str(datetime.now()) + "     " + "Arguments and files loaded")
-    output_log.write(str(datetime.now()) + "     " + "-v Verbose flag set printing extended ouput" + "\n")
+    if args.verbose == True:
+        print(str(args.acceptedeula))
+        print(str(args.verbose))
+        print(str(args.IPv4_1))
+        print(str(args.IPv4_2))
+        print(str(args.IPv4_3))
+        print(str(args.IPv4_4))
+        print(str(args.IPv6_1))
+        print(str(args.IPv6_2))
+        print(str(args.IPv6_3))
+        print(str(args.IPv6_4))
+        print(str(args.IPv6_5))
+        print(str(args.IPv6_6))
+        print(str(args.IPv6_7))
+        print(str(args.IPv6_8))
+        print(str(args.hostname))
+        print(str(args.domain))
+        print(str(args.mac))
+        print(str(args.username))
+        print(str(args.certificates))
+        print(str(args.outputfile))
+    return
 
-output_log.write(str(datetime.now()) + "     " + "Arguments and files loaded" + "\n")
-output_log.write(str(datetime.now()) + "     " + "verbose flag is " + str(args.verbose) + "\n")
-output_log.write(str(datetime.now()) + "     " + "IP1 flag is" + str(args.IPv4_1) + "\n")
-output_log.write(str(datetime.now()) + "     " + "IP2 flag is" + str(args.IPv4_2) + "\n")
-output_log.write(str(datetime.now()) + "     " + "IP3 flag is" + str(args.IPv4_3) + "\n")
-output_log.write(str(datetime.now()) + "     " + "IP4 flag is" + str(args.IPv4_4) + "\n")
-output_log.write(str(datetime.now()) + "     " + "IP1 flag is" + str(args.IPv6_1) + "\n")
-output_log.write(str(datetime.now()) + "     " + "IP2 flag is" + str(args.IPv6_2) + "\n")
-output_log.write(str(datetime.now()) + "     " + "IP3 flag is" + str(args.IPv6_3) + "\n")
-output_log.write(str(datetime.now()) + "     " + "IP4 flag is" + str(args.IPv6_4) + "\n")
-output_log.write(str(datetime.now()) + "     " + "IP1 flag is" + str(args.IPv6_5) + "\n")
-output_log.write(str(datetime.now()) + "     " + "IP2 flag is" + str(args.IPv6_6) + "\n")
-output_log.write(str(datetime.now()) + "     " + "IP3 flag is" + str(args.IPv6_7) + "\n")
-output_log.write(str(datetime.now()) + "     " + "IP4 flag is" + str(args.IPv6_8) + "\n")
-output_log.write(str(datetime.now()) + "     " + "hostname flag is" + str(args.hostname) + "\n")
-output_log.write(str(datetime.now()) + "     " + "domain flag is" + str(args.domain) + "\n")
-output_log.write(str(datetime.now()) + "     " + "mac flag is" + str(args.mac) + "\n")
-output_log.write(str(datetime.now()) + "     " + "username flag is" + str(args.username) + "\n")
-output_log.write(str(datetime.now()) + "     " + "certificates flag is" + str(args.certificates) + "\n")
-output_log.write(str(datetime.now()) + "     " + "inputfile is" + str(args.inputfile) + "\n")
 
+def create_logfile():
+    try:
+        output_filename = str(datetime.now()) + "-Redacting-Tool"
+        output_log = open(str(output_filename) + ".text", 'a+')
+        output_log.write(str(datetime.now()) + "     " + "log file created sucessfully file name should be " +
+                         str(output_filename) + "\n")
+    except:
+        print("something went bad opening/creating file for writing")
+        print("Unexpected error:", sys.exc_info()[0])
+        quit()
+    return
+
+
+def create_output_file():
+    try:
+        if args.outputfile is None:
+            output_file_name = str(str(datetime.now()) + "-OutputFile")
+            print(str(datetime.now()) + "     " + "output file created with name " + str(output_file_name))
+        else:
+            output_file_name = str(args.outputfile)
+            print(str(datetime.now()) + "     " + "output file created with name " + str(output_file_name))
+        output_file = open(str(output_file_name) + ".text", 'a+')
+        print(str(datetime.now()) + "     " + "output file created and opened")
+    except:
+        print("something went bad opening/creating output file for writing")
+        print("Unexpected error:", sys.exc_info()[0])
+        quit()
+    return
+
+
+def write_kickoff_debugging():
+    if args.verbose:
+        print(str(datetime.now()) + "     " + "Arguments and files loaded")
+        output_log.write(str(datetime.now()) + "     " + "-v Verbose flag set printing extended ouput" + "\n")
+
+    output_log.write(str(datetime.now()) + "     " + "Arguments and files loaded" + "\n")
+    output_log.write(str(datetime.now()) + "     " + "verbose flag is " + str(args.verbose) + "\n")
+    output_log.write(str(datetime.now()) + "     " + "IP1 flag is" + str(args.IPv4_1) + "\n")
+    output_log.write(str(datetime.now()) + "     " + "IP2 flag is" + str(args.IPv4_2) + "\n")
+    output_log.write(str(datetime.now()) + "     " + "IP3 flag is" + str(args.IPv4_3) + "\n")
+    output_log.write(str(datetime.now()) + "     " + "IP4 flag is" + str(args.IPv4_4) + "\n")
+    output_log.write(str(datetime.now()) + "     " + "IP1 flag is" + str(args.IPv6_1) + "\n")
+    output_log.write(str(datetime.now()) + "     " + "IP2 flag is" + str(args.IPv6_2) + "\n")
+    output_log.write(str(datetime.now()) + "     " + "IP3 flag is" + str(args.IPv6_3) + "\n")
+    output_log.write(str(datetime.now()) + "     " + "IP4 flag is" + str(args.IPv6_4) + "\n")
+    output_log.write(str(datetime.now()) + "     " + "IP1 flag is" + str(args.IPv6_5) + "\n")
+    output_log.write(str(datetime.now()) + "     " + "IP2 flag is" + str(args.IPv6_6) + "\n")
+    output_log.write(str(datetime.now()) + "     " + "IP3 flag is" + str(args.IPv6_7) + "\n")
+    output_log.write(str(datetime.now()) + "     " + "IP4 flag is" + str(args.IPv6_8) + "\n")
+    output_log.write(str(datetime.now()) + "     " + "hostname flag is" + str(args.hostname) + "\n")
+    output_log.write(str(datetime.now()) + "     " + "domain flag is" + str(args.domain) + "\n")
+    output_log.write(str(datetime.now()) + "     " + "mac flag is" + str(args.mac) + "\n")
+    output_log.write(str(datetime.now()) + "     " + "username flag is" + str(args.username) + "\n")
+    output_log.write(str(datetime.now()) + "     " + "certificates flag is" + str(args.certificates) + "\n")
+    output_log.write(str(datetime.now()) + "     " + "inputfile is" + str(args.inputfile) + "\n")
+    return
+
+parse_all_arguments()
+create_logfile()
+create_output_file()
+write_kickoff_debugging()
 #
 #
 # NOW LOAD THE INPUT FILE
 #
 #
-try:
-    input_file = open(args.inputfile.name, "r", buffering=16777216, encoding='latin-1')
-    output_log.write(str(datetime.now()) + "     " + "input file opened" + "\n")
-except:
-    print(str(datetime.now()) + "     " + "error opening input file")
-    output_log.write(str(datetime.now()) + "     " + "error opening input file" + "\n")
-#
-#
-# FIND ALL IP ADDRESSES
-#
-#
+def open_input_file():
+    try:
+        input_file = open(args.inputfile.name, "r", buffering=16777216, encoding='latin-1')
+        output_log.write(str(datetime.now()) + "     " + "input file opened" + "\n")
+    except:
+        print(str(datetime.now()) + "     " + "error opening input file")
+        output_log.write(str(datetime.now()) + "     " + "error opening input file" + "\n")
+    return
+open_input_file()
 
-ipv4_octets_to_replace = 0
-if args.IPv4_1:
-    ipv4_octets_to_replace = 1
-elif args.IPv4_2:
-    ipv4_octets_to_replace = 2
-elif args.IPv4_3:
-    ipv4_octets_to_replace = 3
-elif args.IPv4_4:
-    ipv4_octets_to_replace = 4
-elif ipv4_octets_to_replace == 0:
-    print(str(datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv4 IN THIS PASS ###########")
-    print(str(datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv4 IN THIS PASS ###########")
-    print(str(datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv4 IN THIS PASS ###########")
-    print(str(datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv4 IN THIS PASS ###########")
-    print(str(datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv4 IN THIS PASS ###########")
-    output_log.write(
-        str(datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv4 IN THIS PASS ###########" + "\n")
-    output_log.write(
-        str(datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv4 IN THIS PASS ###########" + "\n")
-    output_log.write(
-        str(datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv4 IN THIS PASS ###########" + "\n")
-    output_log.write(
-        str(datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv4 IN THIS PASS ###########" + "\n")
-    output_log.write(
-        str(datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv4 IN THIS PASS ###########" + "\n")
+def scope_ipv4_addresses():
+    ipv4_octets_to_replace = 0
+    if args.IPv4_1:
+        ipv4_octets_to_replace = 1
+    elif args.IPv4_2:
+        ipv4_octets_to_replace = 2
+    elif args.IPv4_3:
+        ipv4_octets_to_replace = 3
+    elif args.IPv4_4:
+        ipv4_octets_to_replace = 4
+    elif ipv4_octets_to_replace == 0:
+        print(str(datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv4 IN THIS PASS ###########")
+        print(str(datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv4 IN THIS PASS ###########")
+        print(str(datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv4 IN THIS PASS ###########")
+        print(str(datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv4 IN THIS PASS ###########")
+        print(str(datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv4 IN THIS PASS ###########")
+        output_log.write(
+            str(
+                datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv4 IN THIS PASS ###########" + "\n" +
+                datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv4 IN THIS PASS ###########" + "\n" +
+                datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv4 IN THIS PASS ###########" + "\n" +
+                datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv4 IN THIS PASS ###########" + "\n" +
+                datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv4 IN THIS PASS ###########" + "\n")
+    return
+scope_ipv4_addresses()
 
-ipv6_octets_to_replace = 0
-if args.IPv6_1:
-    ipv6_octets_to_replace = 1
-elif args.IPv6_2:
-    ipv6_octets_to_replace = 2
-elif args.IPv6_3:
-    ipv6_octets_to_replace = 3
-elif args.IPv6_4:
-    ipv6_octets_to_replace = 4
-elif args.IPv6_5:
-    ipv6_octets_to_replace = 5
-elif args.IPv6_6:
-    ipv6_octets_to_replace = 6
-elif args.IPv6_7:
-    ipv6_octets_to_replace = 7
-elif args.IPv6_8:
-    ipv6_octets_to_replace = 8
-elif ipv6_octets_to_replace == 0:
-    print(str(datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv6 IN THIS PASS ###########")
-    print(str(datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv6 IN THIS PASS ###########")
-    print(str(datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv6 IN THIS PASS ###########")
-    print(str(datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv6 IN THIS PASS ###########")
-    print(str(datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv6 IN THIS PASS ###########")
-    output_log.write(
-        str(datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv6 IN THIS PASS ###########" + "\n")
-    output_log.write(
-        str(datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv6 IN THIS PASS ###########" + "\n")
-    output_log.write(
-        str(datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv6 IN THIS PASS ###########" + "\n")
-    output_log.write(
-        str(datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv6 IN THIS PASS ###########" + "\n")
-    output_log.write(
-        str(datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv6 IN THIS PASS ###########" + "\n")
+
+def scope_ipv6_addresses():
+    ipv6_octets_to_replace = 0
+    if args.IPv6_1:
+        ipv6_octets_to_replace = 1
+    elif args.IPv6_2:
+        ipv6_octets_to_replace = 2
+    elif args.IPv6_3:
+        ipv6_octets_to_replace = 3
+    elif args.IPv6_4:
+        ipv6_octets_to_replace = 4
+    elif args.IPv6_5:
+        ipv6_octets_to_replace = 5
+    elif args.IPv6_6:
+        ipv6_octets_to_replace = 6
+    elif args.IPv6_7:
+        ipv6_octets_to_replace = 7
+    elif args.IPv6_8:
+        ipv6_octets_to_replace = 8
+    elif ipv6_octets_to_replace == 0:
+        print(str(datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv6 IN THIS PASS ###########")
+        print(str(datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv6 IN THIS PASS ###########")
+        print(str(datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv6 IN THIS PASS ###########")
+        print(str(datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv6 IN THIS PASS ###########")
+        print(str(datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv6 IN THIS PASS ###########")
+        output_log.write(
+            str(
+                datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv6 IN THIS PASS ###########" + "\n" +
+                datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv6 IN THIS PASS ###########" + "\n" +
+                datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv6 IN THIS PASS ###########" + "\n" +
+                datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv6 IN THIS PASS ###########" + "\n" +
+                datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv6 IN THIS PASS ###########" + "\n")
+    return
+scope_ipv6_addresses()
+
 #
 # Find All things to replace
 #
-ipv4_address_list_raw = []
-ipv6_address_list_raw = []
-hostname_list_raw = []
-domain_list_raw = []
-mac_address_list_raw = []
-username_list_raw = []
-ipv4_regex = re.compile(r'[0-9]+(?:\.[0-9]+){3}')
-ipv6_regex = re.compile('(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|'                              
-                        '([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|'
-                        '([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|'
-                        '([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|'
-                        '([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|'
-                        '([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|'
-                        '[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|'
-                        '([0-9a-fA-F]{1,4}:){1,7}:)')
-hostname_regex = re.compile(r'^hostname\s*(.*)')
-domain_regex = re.compile(r'^ip domain name\s*(.*)')
-mac_regex = re.compile('(([0-9a-fA-F]{4}[\.]){2}[0-9a-fA-F]{4})')
-username_regex = re.compile(r'^username \s*(.*)')
 
-for line in input_file:
-    #print(str(line))
-    ipv4_working_line = []
-    ipv6_working_line = []
-    hostname_working_line = []
-    domain_working_line = []
-    mac_working_line = []
-    username_working_line = []
-    ipv4_working_line = ipv4_regex.findall(line)
-    ipv6_working_line = ipv6_regex.findall(line)
-    hostname_working_line = hostname_regex.findall(line)
-    domain_working_line = domain_regex.findall(line)
-    mac_working_line = mac_regex.findall(line)
-    username_working_line = domain_regex.findall(line)
-    if not ipv4_working_line == []:
-        for i in ipv4_working_line:
-            ipv4_address_list_raw.append(i)
-    if not ipv6_working_line == []:
-        for i in ipv6_working_line:
-            ipv6_address_list_raw.append(i[0])
-    if not hostname_working_line == []:
-        for i in hostname_working_line:
-            hostname_list_raw.append(i)
-    if not domain_working_line == []:
-        for i in domain_working_line:
-            domain_list_raw.append(i)
-    if not mac_working_line == []:
-        for i in mac_working_line:
-            mac_address_list_raw.append(i[0])
-    if not username_working_line == []:
-        for i in username_working_line:
-            username_list_raw.append(i)
+
+def compile_regex():
+    ipv4_address_list_raw = []
+    ipv6_address_list_raw = []
+    hostname_list_raw = []
+    domain_list_raw = []
+    mac_address_list_raw = []
+    username_list_raw = []
+    ipv4_regex = re.compile(r'[0-9]+(?:\.[0-9]+){3}')
+    ipv6_regex = re.compile('(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|'                              
+                            '([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|'
+                            '([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|'
+                            '([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|'
+                            '([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|'
+                            '([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|'
+                            '[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|'
+                            '([0-9a-fA-F]{1,4}:){1,7}:)')
+    hostname_regex = re.compile(r'^hostname\s*(.*)')
+    domain_regex = re.compile(r'^ip domain name\s*(.*)')
+    domain_name_regex = re.compile(r'^ip domain-name\s*(.*)')
+    mac_regex = re.compile('(([0-9a-fA-F]{4}[\.]){2}[0-9a-fA-F]{4})')
+    #username_regex = re.compile(r'^username \s*(.*)')
+    username_regex = re.compile(r'^username\s*(.*)')
+    return
+compile_regex()
+
+def process_input_for_dictionary():
+    for line in input_file:
+        #print(str(line))
+        ipv4_working_line = []
+        ipv6_working_line = []
+        hostname_working_line = []
+        domain_working_line = []
+        mac_working_line = []
+        username_working_line = []
+        ipv4_working_line = ipv4_regex.findall(line)
+        ipv6_working_line = ipv6_regex.findall(line)
+        hostname_working_line = hostname_regex.findall(line)
+        domain_working_line = domain_regex.findall(line)
+        domain_name_working_line = domain_name_regex.findall(line)
+        mac_working_line = mac_regex.findall(line)
+        username_working_line = domain_regex.findall(line)
+        if not ipv4_working_line == []:
+            for i in ipv4_working_line:
+                ipv4_address_list_raw.append(i)
+        if not ipv6_working_line == []:
+            for i in ipv6_working_line:
+                ipv6_address_list_raw.append(i[0])
+        if not hostname_working_line == []:
+            for i in hostname_working_line:
+                hostname_list_raw.append(i)
+        if not domain_working_line == []:
+            for i in domain_working_line:
+                domain_list_raw.append(i)
+        if not domain_name_working_line == []:
+            for i in domain_name_working_line:
+                domain_list_raw.append(i)
+        if not mac_working_line == []:
+            for i in mac_working_line:
+                mac_address_list_raw.append(i[0])
+        if not username_working_line == []:
+            for i in username_working_line:
+                username_list_raw.append(i)
+    return
+process_input_for_dictionary()
 #
 # Print details if verbose selected
 #
-if args.verbose:
+
+
+def print_verbose_debuging():
     output_log.write(
                 str(datetime.now()) + "     " + "here is the RAW IPv4 address list" + str(ipv4_address_list_raw) + "\n")
     output_log.write(
@@ -353,36 +376,39 @@ if args.verbose:
                 str(datetime.now()) + "     " + "here is the RAW mac address list" + str(mac_address_list_raw) + "\n")
     output_log.write(
                 str(datetime.now()) + "     " + "here is the RAW username list" + str(username_list_raw) + "\n")
-#
-# Print All IPv4 addresses
-#
-output_log.write(str(datetime.now()) + "     " + "here is the RAW IPv4 address list length is " + str(len(ipv4_address_list_raw)) + "\n")
-print(str(datetime.now()) + "     " + str(len(ipv4_address_list_raw)) + " IPv4 addresses found")
-#
-# Print All IPv6 addresses
-#
-output_log.write(str(datetime.now()) + "     " + "here is the RAW  IPv6address list length is " + str(len(ipv6_address_list_raw)) + "\n")
-print(str(datetime.now()) + "     " + str(len(ipv6_address_list_raw)) + " IPv6 addresses found")
-#
-# Print Hostname Stuff
-#
-output_log.write(str(datetime.now()) + "     " + "here is the RAW hostname list length is " + str(len(hostname_list_raw)) + "\n")
-print(str(datetime.now()) + "     " + str(len(hostname_list_raw)) + " hostname found")
-#
-# Print domain name stuff
-#
-output_log.write(str(datetime.now()) + "     " + "here is the RAW domain list length is " + str(len(domain_list_raw)) + "\n")
-print(str(datetime.now()) + "     " + str(len(hostname_list_raw)) + " domains found")
-#
-# Print mac address stuff
-#
-output_log.write(str(datetime.now()) + "     " + "here is the RAW mac address list length is " + str(len(mac_address_list_raw)) + "\n")
-print(str(datetime.now()) + "     " + str(len(mac_address_list_raw)) + " MAC addresses found")
-#
-# Print Username stuff
-#
-output_log.write(str(datetime.now()) + "     " + "here is the RAW username list length is " + str(len(username_list_raw)) + "\n")
-print(str(datetime.now()) + "     " + str(len(username_list_raw)) + " usernames found")
+    # Print All IPv4 addresses
+    #
+    output_log.write(str(datetime.now()) + "     " + "here is the RAW IPv4 address list length is " + str(len(ipv4_address_list_raw)) + "\n")
+    print(str(datetime.now()) + "     " + str(len(ipv4_address_list_raw)) + " IPv4 addresses found")
+    #
+    # Print All IPv6 addresses
+    #
+    output_log.write(str(datetime.now()) + "     " + "here is the RAW  IPv6address list length is " + str(len(ipv6_address_list_raw)) + "\n")
+    print(str(datetime.now()) + "     " + str(len(ipv6_address_list_raw)) + " IPv6 addresses found")
+    #
+    # Print Hostname Stuff
+    #
+    output_log.write(str(datetime.now()) + "     " + "here is the RAW hostname list length is " + str(len(hostname_list_raw)) + "\n")
+    print(str(datetime.now()) + "     " + str(len(hostname_list_raw)) + " hostname found")
+    #
+    # Print domain name stuff
+    #
+    output_log.write(str(datetime.now()) + "     " + "here is the RAW domain list length is " + str(len(domain_list_raw)) + "\n")
+    print(str(datetime.now()) + "     " + str(len(hostname_list_raw)) + " domains found")
+    #
+    # Print mac address stuff
+    #
+    output_log.write(str(datetime.now()) + "     " + "here is the RAW mac address list length is " + str(len(mac_address_list_raw)) + "\n")
+    print(str(datetime.now()) + "     " + str(len(mac_address_list_raw)) + " MAC addresses found")
+    #
+    # Print Username stuff
+    #
+    output_log.write(str(datetime.now()) + "     " + "here is the RAW username list length is " + str(len(username_list_raw)) + "\n")
+    print(str(datetime.now()) + "     " + str(len(username_list_raw)) + " usernames found")
+    return
+
+if args.verbose:
+    print_verbose_debuging()
 #
 # Unique things
 #
@@ -394,6 +420,8 @@ def remove_duplicates(original_list):
         if not i:
             continue
         if i not in no_duplicate_list:
+            #if not i:   # checks for empty string (I hope)
+            print(str(i))
             no_duplicate_list.append(i)
     return no_duplicate_list
 
@@ -529,6 +557,7 @@ print(str(datetime.now()) + "     " +"domain dictionary created starting replace
 #
 # Replacement dictionary Mac-Addresses
 #
+
 print(str(datetime.now()) + "     " + "replacing mac with <--MAC-Address-->")
 mac_replacement_dictionary = {}
 mac_list_replacement = []

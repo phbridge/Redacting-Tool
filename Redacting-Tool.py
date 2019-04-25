@@ -12,15 +12,16 @@
 # Phil Bridges - phbridge@cisco.com
 #
 # EULA
-# This software is provided as is and with zero support level. Support can be purchased by providing Phil bridges with a
-# varity of Beer, Wine, Steak and Greggs pasties. Please contact phbridge@cisco.com for support costs and arrangements.
-# Until provison of alcohol or baked goodies your on your own but there is no rocket sciecne involved so dont panic too
-# much. To accept this EULA you must include the correct flag when running the script. If this script goes crazy wrong and
-# breaks everything then your also on your own and Phil will not accept any liability of any type or kind. As this script
-# belongs to Phil and NOT Cisco then Cisco cannot be held responsable for its use or if it goes bad, nor can Cisco make
-# any profit from this script. Phil can profit from this script but will not assume any liability. Other than the boaring
-# stuff please enjoy and plagerise as you like (as I have no ways to stop you) but common curtacy says to credit me in some
-# way [see above comments on Beer, Wine, Steak and Greggs.].
+# This software is provided as is and with zero support level. Support can be purchased by providing Phil bridges
+# with a variety of Beer, Wine, Steak and Greggs pasties. Please contact phbridge@cisco.com for support costs and
+# arrangements. Until provision of alcohol or baked goodies your on your own but there is no rocket science
+# involved so don't panic too much. To accept this EULA you must include the correct flag when running the script.
+# If this script goes crazy wrong and breaks everything then your also on your own and Phil will not accept any
+# liability of any type or kind. As this script belongs to Phil and NOT Cisco then Cisco cannot be held
+# responsible for its use or if it goes bad, nor can Cisco make any profit from this script. Phil can profit from
+# this script but will not assume any liability. Other than the boring stuff please enjoy and plagiarise as you
+# like (as I have no ways to stop you) but common curacy says to credit me in some way
+# [see above comments on Beer, Wine, Steak and Greggs.].
 #
 # Version Control               Comments
 # Version 0.1 Date 14/06/18     Inital draft
@@ -110,25 +111,26 @@ def parse_all_arguments():
     if args.acceptedeula == False:
         print("""you need to accept the EULA agreement which is as follows:-
     # EULA
-    # This software is provided as is and with zero support level. Support can be purchased by providing Phil bridges with a 
-    # varity of Beer, Wine, Steak and Greggs pasties. Please contact phbridge@cisco.com for support costs and arrangements. 
-    # Until provison of alcohol or baked goodies your on your own but there is no rocket sciecne involved so dont panic too 
-    # much. To accept this EULA you must include the correct flag when running the script. If this script goes crazy wrong and 
-    # breaks everything then your also on your own and Phil will not accept any liability of any type or kind. As this script 
-    # belongs to Phil and NOT Cisco then Cisco cannot be held responsable for its use or if it goes bad, nor can Cisco make
-    # any profit from this script. Phil can profit from this script but will not assume any liability. Other than the boaring
-    # stuff please enjoy and plagerise as you like (as I have no ways to stop you) but common curtacy says to credit me in some
-    # way [see above comments on Beer, Wine, Steak and Greggs.].
+    # This software is provided as is and with zero support level. Support can be purchased by providing Phil bridges 
+    # with a variety of Beer, Wine, Steak and Greggs pasties. Please contact phbridge@cisco.com for support costs and 
+    # arrangements. Until provision of alcohol or baked goodies your on your own but there is no rocket science 
+    # involved so don't panic too much. To accept this EULA you must include the correct flag when running the script. 
+    # If this script goes crazy wrong and breaks everything then your also on your own and Phil will not accept any 
+    # liability of any type or kind. As this script belongs to Phil and NOT Cisco then Cisco cannot be held 
+    # responsible for its use or if it goes bad, nor can Cisco make any profit from this script. Phil can profit from 
+    # this script but will not assume any liability. Other than the boring stuff please enjoy and plagiarise as you 
+    # like (as I have no ways to stop you) but common curacy says to credit me in some way 
+    # [see above comments on Beer, Wine, Steak and Greggs.].
     
     # To accept the EULA please run with the -ACCEPTEULA flag
         """)
         quit()
 
-    if args.verbose == True:
+    if args.verbose:
         print("-v Verbose flag set printing extended ouput")
         print("seed file loaded is ", str(args.inputfile.name))
     print(str(datetime.now()) + "     " + "Arguments and files loaded")
-    if args.verbose == True:
+    if args.verbose:
         print(str(args.acceptedeula))
         print(str(args.verbose))
         print(str(args.IPv4_1))
@@ -149,7 +151,7 @@ def parse_all_arguments():
         print(str(args.username))
         print(str(args.certificates))
         print(str(args.outputfile))
-    return
+    return args
 
 
 def create_logfile():
@@ -162,7 +164,7 @@ def create_logfile():
         print("something went bad opening/creating file for writing")
         print("Unexpected error:", sys.exc_info()[0])
         quit()
-    return
+    return output_log
 
 
 def create_output_file():
@@ -179,7 +181,7 @@ def create_output_file():
         print("something went bad opening/creating output file for writing")
         print("Unexpected error:", sys.exc_info()[0])
         quit()
-    return
+    return output_file
 
 
 def write_kickoff_debugging():
@@ -207,12 +209,8 @@ def write_kickoff_debugging():
     output_log.write(str(datetime.now()) + "     " + "username flag is" + str(args.username) + "\n")
     output_log.write(str(datetime.now()) + "     " + "certificates flag is" + str(args.certificates) + "\n")
     output_log.write(str(datetime.now()) + "     " + "inputfile is" + str(args.inputfile) + "\n")
-    return
+    return output_log
 
-parse_all_arguments()
-create_logfile()
-create_output_file()
-write_kickoff_debugging()
 
 def open_input_file():
     #
@@ -224,8 +222,13 @@ def open_input_file():
     except:
         print(str(datetime.now()) + "     " + "error opening input file")
         output_log.write(str(datetime.now()) + "     " + "error opening input file" + "\n")
-    return
-open_input_file()
+    return input_file
+
+args = parse_all_arguments()
+output_log = create_logfile()
+output_file = create_output_file()
+write_kickoff_debugging()
+input_file = open_input_file()
 
 def scope_ipv4_addresses():
     ipv4_octets_to_replace = 0
@@ -243,15 +246,18 @@ def scope_ipv4_addresses():
         print(str(datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv4 IN THIS PASS ###########")
         print(str(datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv4 IN THIS PASS ###########")
         print(str(datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv4 IN THIS PASS ###########")
-        output_log.write(
-            str(
-                datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv4 IN THIS PASS ###########" + "\n" +
-                datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv4 IN THIS PASS ###########" + "\n" +
-                datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv4 IN THIS PASS ###########" + "\n" +
-                datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv4 IN THIS PASS ###########" + "\n" +
-                datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv4 IN THIS PASS ###########" + "\n")
-    return
-scope_ipv4_addresses()
+        output_log.write(str(
+            datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv4 IN THIS PASS ###########" + "\n")
+        output_log.write(str(
+            datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv4 IN THIS PASS ###########" + "\n")
+        output_log.write(str(
+            datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv4 IN THIS PASS ###########" + "\n")
+        output_log.write(str(
+            datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv4 IN THIS PASS ###########" + "\n")
+        output_log.write(str(
+            datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv4 IN THIS PASS ###########" + "\n")
+    return ipv4_octets_to_replace
+ipv4_octets_to_replace = scope_ipv4_addresses()
 
 
 def scope_ipv6_addresses():
@@ -278,29 +284,25 @@ def scope_ipv6_addresses():
         print(str(datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv6 IN THIS PASS ###########")
         print(str(datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv6 IN THIS PASS ###########")
         print(str(datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv6 IN THIS PASS ###########")
-        output_log.write(
-            str(
-                datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv6 IN THIS PASS ###########" + "\n" +
-                datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv6 IN THIS PASS ###########" + "\n" +
-                datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv6 IN THIS PASS ###########" + "\n" +
-                datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv6 IN THIS PASS ###########" + "\n" +
-                datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv6 IN THIS PASS ###########" + "\n")
-    return
-scope_ipv6_addresses()
-
-
+        output_log.write(str(
+            datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv6 IN THIS PASS ###########" + "\n")
+        output_log.write(str(
+            datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv6 IN THIS PASS ###########" + "\n")
+        output_log.write(str(
+            datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv6 IN THIS PASS ###########" + "\n")
+        output_log.write(str(
+            datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv6 IN THIS PASS ###########" + "\n")
+        output_log.write(str(
+            datetime.now()) + "     " + "########### WARNING WE ARE NOT MASKING IPv6 IN THIS PASS ###########" + "\n")
+    return ipv6_octets_to_replace
+ipv6_octets_to_replace = scope_ipv6_addresses()
 
 
 def compile_regex():
     #
     # Find All things to replace
     #
-    ipv4_address_list_raw = []
-    ipv6_address_list_raw = []
-    hostname_list_raw = []
-    domain_list_raw = []
-    mac_address_list_raw = []
-    username_list_raw = []
+
     ipv4_regex = re.compile(r'[0-9]+(?:\.[0-9]+){3}')
     ipv6_regex = re.compile('(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|'                              
                             '([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|'
@@ -314,12 +316,18 @@ def compile_regex():
     domain_regex = re.compile(r'^ip domain name\s*(.*)')
     domain_name_regex = re.compile(r'^ip domain-name\s*(.*)')
     mac_regex = re.compile('(([0-9a-fA-F]{4}[\.]){2}[0-9a-fA-F]{4})')
-    #username_regex = re.compile(r'^username \s*(.*)')
     username_regex = re.compile(r'^username\s*(.*)')
-    return
-compile_regex()
+    return ipv4_regex, ipv6_regex, hostname_regex, domain_regex, domain_name_regex, mac_regex, username_regex
+
+ipv4_regex, ipv6_regex, hostname_regex, domain_regex, domain_name_regex, mac_regex, username_regex = compile_regex()
 
 def process_input_for_dictionary():
+    ipv4_address_list_raw = []
+    ipv6_address_list_raw = []
+    hostname_list_raw = []
+    domain_list_raw = []
+    mac_address_list_raw = []
+    username_list_raw = []
     for line in input_file:
         #print(str(line))
         ipv4_working_line = []
@@ -356,8 +364,9 @@ def process_input_for_dictionary():
         if not username_working_line == []:
             for i in username_working_line:
                 username_list_raw.append(i)
-    return
-process_input_for_dictionary()
+    return ipv4_address_list_raw, ipv6_address_list_raw, hostname_list_raw, domain_list_raw, mac_address_list_raw, username_list_raw,
+
+ipv4_address_list_raw, ipv6_address_list_raw, hostname_list_raw, domain_list_raw, mac_address_list_raw, username_list_raw, = process_input_for_dictionary()
 
 
 def print_verbose_debuging():
@@ -566,13 +575,13 @@ mac_regex_split = re.compile("[. :]")
 for i in mac_address_list:
     mac_origional_address = mac_regex_split.split(i)
     mac_masked_address = []
-    if len(mac_origional_address) == 6: #for mac address in format 00:11:22:33:44:55
+    if len(mac_origional_address) == 6:         # for mac address in format 00:11:22:33:44:55
         for o in range(0, len(mac_origional_address)):
             mac_masked_address.append(''.join(str(random.choice("0123456789ABCDEF") + random.choice("0123456789ABCDEF"))))
             if o >= (len(mac_origional_address)-1):
                 mac_masked_address.append(":")
 
-    elif len(mac_origional_address) == 3: #  for mac address in format 0011.2233.4455
+    elif len(mac_origional_address) == 3:       # for mac address in format 0011.2233.4455
         for o in range(0, len(mac_origional_address)):
             mac_masked_address.append(''.join(str(random.choice("0123456789ABCDEF") + random.choice("0123456789ABCDEF") +
                                                    random.choice("0123456789ABCDEF") + random.choice("0123456789ABCDEF"))))

@@ -730,6 +730,7 @@ if not args.nodictionary:
 # TidyUp and CleanUp
 #
 #
+output_file.flush()
 input_file.close()
 output_file.close()
 output_log.write(str(datetime.now()) + "     " + "Done Going Home Now " + "\n")
